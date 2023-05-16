@@ -1,0 +1,9 @@
+pandas
+numpy
+tensorflow
+opencv-python
+scipy
+# local packages
+-e tf_saliency_methods
+-e wsol_3d_metrics
+
