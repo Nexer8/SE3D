@@ -50,7 +50,7 @@ def evaluate(base_path: str, model_path: str, fold: int, iou_threshold_list: Tup
             iou_threshold_list=iou_threshold_list,
             multi_contour_eval=True,
         )
-        vx_ap_evaluator = MaskEvaluator(
+        vxap_evaluator = MaskEvaluator(
             iou_threshold_list=iou_threshold_list,
         )
         max_3d_box_acc_evaluator = BBoxEvaluator3D(
@@ -76,7 +76,7 @@ def evaluate(base_path: str, model_path: str, fold: int, iou_threshold_list: Tup
             # compute the heatmap
             heatmap = cam_method.get_cam(np.expand_dims(volume, axis=0), classes['Tumor'])
             # accumulate the metrics
-            vx_ap_evaluator.accumulate(heatmap, mask)
+            vxap_evaluator.accumulate(heatmap, mask)
             max_3d_box_acc_evaluator.accumulate(heatmap, mask)
             max_3d_box_acc_v2_evaluator.accumulate(heatmap, mask)
 
@@ -89,7 +89,7 @@ def evaluate(base_path: str, model_path: str, fold: int, iou_threshold_list: Tup
         performances = {
             'MaxBoxAcc': max_box_acc_evaluator.compute(),
             'MaxBoxAccV2': max_box_acc_v2_evaluator.compute(),
-            'VxAP': vx_ap_evaluator.compute(),
+            'VxAP': vxap_evaluator.compute(),
             'Max3DBoxAcc': max_3d_box_acc_evaluator.compute(),
             'Max3DBoxAccV2': max_3d_box_acc_v2_evaluator.compute()
         }

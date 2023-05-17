@@ -28,7 +28,7 @@ class MaskEvaluator(LocalizationEvaluator):
             heatmap: numpy.ndarray(size=(H, W, D), dtype=float)
             mask: numpy.ndarray(size=(H, W, D), dtype=float).
         """
-        check_heatmap_validity(heatmap, n_dims=3)
+        check_heatmap_validity(heatmap, n_dims=len(mask.shape))
 
         gt_true_scores = heatmap[mask == 1]
         gt_false_scores = heatmap[mask == 0]

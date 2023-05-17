@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model
 
-from base import SaliencyMethod
+from tf_saliency_methods.base import SaliencyMethod
 
 
 class GradCAM(SaliencyMethod):
