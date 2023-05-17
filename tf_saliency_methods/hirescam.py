@@ -2,13 +2,11 @@ import numpy as np
 import tensorflow as tf
 
 from tf_saliency_methods.base import SaliencyMethod
-from tf_saliency_methods.utils import resize_heatmap, min_max_normalization
 
 
 class HiResCAM(SaliencyMethod):
     def __init__(self, model, last_conv_layer_name=None, output_shape=None):
-        super(HiResCAM, self).__init__(model, last_conv_layer_name)
-        self.output_shape = output_shape
+        super(HiResCAM, self).__init__(model, last_conv_layer_name, output_shape=output_shape)
 
     def compute_cam(self, input_image: np.ndarray, pred_index: int = None) -> np.ndarray:
         """
@@ -56,13 +54,3 @@ class HiResCAM(SaliencyMethod):
         # Notice that we clip the heatmap values, which is equivalent to applying ReLU
         heatmap = tf.maximum(heatmap, 0) / tf.math.reduce_max(heatmap)
         return heatmap.numpy()
-
-    def get_cam(self, input_image: tf.Tensor, pred_index: int = None) -> np.ndarray:
-        heatmap = self.compute_cam(input_image, pred_index)
-        if self.output_shape is None:
-            output_shape = input_image.shape[1:-1]
-        else:
-            output_shape = self.output_shape
-        resized_heatmap = resize_heatmap(heatmap, output_shape)
-        normalized_heatmap = min_max_normalization(resized_heatmap)
-        return normalized_heatmap

@@ -62,9 +62,26 @@ def create_table(results, std_err):
     return table
 
 
+# Calculate Model's Accuracy Across all 5 Folds
+accuracies = []
+for fold in range(5):
+    with open(f'{MODEL_PATH}/fold{fold}/cr{fold}.txt', 'r') as f:
+        for line in f:
+            if 'accuracy' in line:
+                accuracies.append(float(line.split()[-2]))
+                break
+
+# calculate the mean and std error
+mean_accuracy = np.mean(accuracies)
+std_err_accuracy = np.std(accuracies) / np.sqrt(len(accuracies))
+accuracy_info = f'Accuracy (*mean &plusmn; std_err*): {mean_accuracy * 100:.2f} &plusmn; {std_err_accuracy * 100:.2f}%.'
+
 # save the table in a file
 t_full_std_err = {k.replace('_std_err', ''): v for k, v in full_results.items() if 'std_err' in k}
 t_full_results = {k: v for k, v in full_results.items() if 'std_err' not in k}
 
 with open(f'{MODEL_PATH}/results.md', 'w') as f:
     f.write(create_table(t_full_results, t_full_std_err).replace('+-', '&plusmn;'))
+    f.write('\n')
+    f.write(accuracy_info)
+    f.write('\n')

@@ -1,9 +1,15 @@
-pandas
-numpy
-tensorflow
-opencv-python
-scipy
-# local packages
+matplotlib~=3.7.1
+nibabel~=5.1.0
+numpy~=1.24.3
+opencv-python~=4.7.0.72
+pandas~=2.0.1
+python-dotenv~=1.0.0
+scikit-learn~=1.2.2
+scipy~=1.9.1
+seaborn~=0.12.2
+setuptools~=65.5.1
+tensorflow~=2.13.0rc0
+volumentations-3D
+wandb
 -e tf_saliency_methods
 -e wsol_3d_metrics
-

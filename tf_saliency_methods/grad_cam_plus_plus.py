@@ -3,13 +3,11 @@ import tensorflow as tf
 from tensorflow.keras import Model
 
 from tf_saliency_methods.base import SaliencyMethod
-from tf_saliency_methods.utils import resize_heatmap, min_max_normalization
 
 
 class GradCAMPlusPlus(SaliencyMethod):
     def __init__(self, model, last_conv_layer_name=None, output_shape=None):
-        super(GradCAMPlusPlus, self).__init__(model, last_conv_layer_name)
-        self.output_shape = output_shape
+        super(GradCAMPlusPlus, self).__init__(model, last_conv_layer_name, output_shape=output_shape)
 
     def compute_cam(self, input_image: np.ndarray, pred_index: int = None) -> np.ndarray:
         """
@@ -38,20 +36,20 @@ class GradCAMPlusPlus(SaliencyMethod):
             third_grads = tape1.gradient(second_grads, last_conv_layer_output)
 
         global_sum = tf.reduce_sum(last_conv_layer_output,
-                                   axis=(*list(range(len(input_image.shape[1:-1]))),))
+                                   axis=(*list(range(len(last_conv_layer_output.shape) - 1)),))
 
         alpha_num = second_grads[0]
         alpha_denom = second_grads[0] * 2.0 + third_grads[0] * global_sum
         alpha_denom = tf.where(alpha_denom != 0.0, alpha_denom, 1e-10)
 
         alphas = alpha_num / alpha_denom
-        alpha_normalization_constant = tf.reduce_sum(alphas, axis=(0, 1, 2))
+        alpha_normalization_constant = tf.reduce_sum(alphas, axis=(*list(range(len(alphas.shape) - 1)),))
         alphas /= alpha_normalization_constant
 
         weights = tf.maximum(first_grads[0], 0.0)
 
         deep_linearization_weights = tf.reduce_sum(
-            tf.multiply(weights, alphas), axis=(*list(range(len(weights.shape))),)
+            tf.multiply(weights, alphas), axis=(*list(range(len(weights.shape) - 1)),)
         )
 
         last_conv_layer_output = last_conv_layer_output[0]
@@ -63,13 +61,3 @@ class GradCAMPlusPlus(SaliencyMethod):
         # Notice that we clip the heatmap values, which is equivalent to applying ReLU
         heatmap = tf.maximum(heatmap, 0) / tf.math.reduce_max(heatmap)
         return heatmap.numpy()
-
-    def get_cam(self, input_image: tf.Tensor, pred_index: int = None) -> np.ndarray:
-        heatmap = self.compute_cam(input_image, pred_index)
-        if self.output_shape is None:
-            output_shape = input_image.shape[1:-1]
-        else:
-            output_shape = self.output_shape
-        resized_heatmap = resize_heatmap(heatmap, output_shape)
-        normalized_heatmap = min_max_normalization(resized_heatmap)
-        return normalized_heatmap

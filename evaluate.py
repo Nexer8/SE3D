@@ -1,5 +1,6 @@
 import argparse
 from glob import glob
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
@@ -10,7 +11,7 @@ from tf_saliency_methods.utils import find_last_layer_by_type
 from wsol_3d_metrics import BBoxEvaluator, BBoxEvaluator3D, MaskEvaluator
 
 
-def evaluate(base_path, model_path, fold, iou_threshold_list):
+def evaluate(base_path: str, model_path: str, fold: int, iou_threshold_list: Tuple[float]):
     df = pd.read_csv(f'{base_path}/metadata.csv')
 
     # Parameters
@@ -40,22 +41,23 @@ def evaluate(base_path, model_path, fold, iou_threshold_list):
         cam_method = method(model, last_conv_layer_name=last_conv_layer_name)
 
         # Initialize the evaluators
-        MaxBoxAcc_evaluator = BBoxEvaluator(
+
+        max_box_acc_evaluator = BBoxEvaluator(
             iou_threshold_list=iou_threshold_list,
             multi_contour_eval=False,
         )
-        MaxBoxAccV2_evaluator = BBoxEvaluator(
+        max_box_acc_v2_evaluator = BBoxEvaluator(
             iou_threshold_list=iou_threshold_list,
             multi_contour_eval=True,
         )
-        VxAP_evaluator = MaskEvaluator(
+        vx_ap_evaluator = MaskEvaluator(
             iou_threshold_list=iou_threshold_list,
         )
-        Max3DBoxAcc_evaluator = BBoxEvaluator3D(
+        max_3d_box_acc_evaluator = BBoxEvaluator3D(
             iou_threshold_list=iou_threshold_list,
             multi_contour_eval=False,
         )
-        Max3DBoxAccV2_evaluator = BBoxEvaluator3D(
+        max_3d_box_acc_v2_evaluator = BBoxEvaluator3D(
             iou_threshold_list=iou_threshold_list,
             multi_contour_eval=True,
         )
@@ -72,28 +74,28 @@ def evaluate(base_path, model_path, fold, iou_threshold_list):
             mask = np.load(mask_path)['data'].astype('float32')
 
             # compute the heatmap
-            heatmap = cam_method.compute_cam(np.expand_dims(volume, axis=0), classes['Tumor'])
+            heatmap = cam_method.get_cam(np.expand_dims(volume, axis=0), classes['Tumor'])
             # accumulate the metrics
-            VxAP_evaluator.accumulate(heatmap, mask)
-            Max3DBoxAcc_evaluator.accumulate(heatmap, mask)
-            Max3DBoxAccV2_evaluator.accumulate(heatmap, mask)
+            vx_ap_evaluator.accumulate(heatmap, mask)
+            max_3d_box_acc_evaluator.accumulate(heatmap, mask)
+            max_3d_box_acc_v2_evaluator.accumulate(heatmap, mask)
 
             # iterate over slices of the 3D heatmap
             for i in range(heatmap.shape[-1]):
-                MaxBoxAcc_evaluator.accumulate(heatmap[..., i], mask[..., i])
-                MaxBoxAccV2_evaluator.accumulate(heatmap[..., i], mask[..., i])
+                max_box_acc_evaluator.accumulate(heatmap[..., i], mask[..., i])
+                max_box_acc_v2_evaluator.accumulate(heatmap[..., i], mask[..., i])
 
         # compute the metrics
         performances = {
-            'MaxBoxAcc': MaxBoxAcc_evaluator.compute(),
-            'MaxBoxAccV2': MaxBoxAccV2_evaluator.compute(),
-            'VxAP': VxAP_evaluator.compute(),
-            'Max3DBoxAcc': Max3DBoxAcc_evaluator.compute(),
-            'Max3DBoxAccV2': Max3DBoxAccV2_evaluator.compute()
+            'MaxBoxAcc': max_box_acc_evaluator.compute(),
+            'MaxBoxAccV2': max_box_acc_v2_evaluator.compute(),
+            'VxAP': vx_ap_evaluator.compute(),
+            'Max3DBoxAcc': max_3d_box_acc_evaluator.compute(),
+            'Max3DBoxAccV2': max_3d_box_acc_v2_evaluator.compute()
         }
 
         # save the metrics
-        np.save(f'{model_path}/fold{fold}/{method.__name__}.npz', data=performances)
+        np.savez_compressed(f'{model_path}/fold{fold}/{method.__name__}.npz', data=performances)
         print(f'{method.__name__} done!')
         print(performances)
         print('\n')

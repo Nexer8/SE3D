@@ -45,7 +45,7 @@ class BBoxEvaluator3D(LocalizationEvaluator):
                 heatmap_img: numpy.ndarray(dtype=uint8, size=(H, W, D))
                 threshold: float
                 is_mask: flag for mask evaluation
-                
+
             Returns:
                 estimated_bboxes: np.ndarray(dtype=int32, size=(N, 6))
                     N: the number of estimated boxes
