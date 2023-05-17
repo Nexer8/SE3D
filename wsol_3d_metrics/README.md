@@ -63,6 +63,8 @@ wsol_3d_metrics                 # root directory
 ├── MaskEvaluator.py            # implements VxAP
 ├── README.md                   # this file
 ├── __init__.py                 # imports all metrics
+├── examples                    # directory with examples
+│   └── wsol_example.ipynb      # notebook with examples
 ├── requirements.txt            # requirements for this repository
 └── setup.py                    # setup file for pip
 ```
