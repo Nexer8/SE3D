@@ -10,8 +10,8 @@ class RespondCAM(SaliencyMethod):
 
     def compute_cam(self, input_image: np.ndarray, pred_index: int = None) -> np.ndarray:
         """
-        Generate class activation heatmap with HiResCAM.
-        Paper: https://arxiv.org/abs/2011.08891
+        Generate class activation heatmap with Respond-CAM.
+        Paper: https://arxiv.org/abs/1806.00102
         """
         # Remove last layer's activation
         self.model.layers[-1].activation = None
