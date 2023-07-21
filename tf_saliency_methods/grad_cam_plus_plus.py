@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras import Model
 
 from tf_saliency_methods.base import SaliencyMethod
 
@@ -16,7 +15,7 @@ class GradCAMPlusPlus(SaliencyMethod):
         """
         # First, we create a model that maps the input image to the activations
         # of the last conv layer as well as the output predictions
-        grad_model = Model(
+        grad_model = tf.keras.models.Model(
             [self.model.inputs], [self.model.get_layer(
                 self.last_conv_layer_name).output, self.model.output]
         )

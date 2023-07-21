@@ -17,4 +17,4 @@ def resize_heatmap(heatmap: np.ndarray, shape: Tuple) -> np.ndarray:
 
 def min_max_normalization(x: np.ndarray) -> np.ndarray:
     """Min-max normalization"""
-    return (x - np.min(x)) / (np.max(x) - np.min(x))
+    return (x - np.min(x)) / (np.max(x) - np.min(x) + 1e-10)
