@@ -19,6 +19,7 @@ callbacks, and can be used with any Keras model for input data of any dimensiona
 - [Grad-CAM](https://arxiv.org/abs/1610.02391): weights the gradients of the target class with the activations of the last convolutional layer.
 - [Grad-CAM++](https://arxiv.org/abs/1710.11063): extends Grad-CAM by adding higher-order derivatives.
 - [HiResCAM](https://arxiv.org/abs/2011.08891): replaces the global average pooling layer with element-wise multiplication of the feature maps and the gradients.
+- [Respondd-CAM](https://arxiv.org/abs/1806.00102): 3D-specific saliency method, which uses weighted-average of all the gradients in the feature map to smoothen the gradients.
 - [Saliency Tubes](https://arxiv.org/abs/1902.01078): 3D-specific saliency method that computes the saliency map by multiplying the class weights with the feature maps of the last convolutional layer.
 
 ## Usage
@@ -53,6 +54,7 @@ tf_saliency_methods             # root directory
 ├── grad_cam_plus_plus.py       # implements Grad-CAM++
 ├── hirescam.py                 # implements HiResCAM
 ├── requirements.txt            # requirements for this repository
+├── respond_cam.py              # implements Respond-CAM
 ├── saliency_tubes.py           # implements Saliency Tubes
 ├── setup.py                    # setup file for pip installation
 └── utils                       # utility functions

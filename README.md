@@ -92,6 +92,7 @@ Available methods:
 - [Grad-CAM](https://arxiv.org/abs/1610.02391)
 - [Grad-CAM++](https://arxiv.org/abs/1710.11063)
 - [HiResCAM](https://arxiv.org/abs/2011.08891)
+- [Respondd-CAM](https://arxiv.org/abs/1806.00102)
 - [Saliency Tubes](https://arxiv.org/abs/1902.01078)
 
 See module's `README.md` for more details.
