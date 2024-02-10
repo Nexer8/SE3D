@@ -29,9 +29,8 @@ for method in METHODS:
             if metric not in results.keys():
                 results[metric] = []
             results[metric].append(performance)
-    # average over the results
-    # also save the std error
 
+    # average over the results and save the std error
     std_err = {}
     for metric, performance in results.items():
         results[metric] = np.average(performance, axis=0)
@@ -43,8 +42,11 @@ for method in METHODS:
 
 # Create Markdown Table
 def create_table(results, std_err):
-    table = '| Method | MaxBoxAcc (IoU: 0.5) | MaxBoxAccV2 (IoU: [0.3, 0.5, 0.7]) | VxAP | Max3DBoxAcc (IoU: 0.5) | Max3DBoxAccV2 (IoU: [0.3, 0.5, 0.7]) |\n'
-    table += '|--------|-----------|--------------|------|------------|---------------|\n'
+    table = (
+            '| Method | MaxBoxAcc (IoU: 0.5) | MaxBoxAccV2 (IoU: [0.3, 0.5, 0.7]) | VxAP | Max3DBoxAcc (IoU: 0.5) | '
+            'Max3DBoxAccV2 (IoU: [0.3, 0.5, 0.7]) |\n'
+            + '|--------|-----------|--------------|------|------------|---------------|\n'
+    )
     for cam_method, result in results.items():
         table += f'| {cam_method} | '
         for metric, performance in result.items():

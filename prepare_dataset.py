@@ -51,22 +51,22 @@ def read_nifti_file(filepath):
     return scan
 
 
-def normalize(volume):
+def normalize(p_volume):
     """Normalize the volume"""
-    volume = (volume - np.min(volume)) / (np.max(volume) - np.min(volume))
-    return (volume * 255).astype(np.uint8)
+    p_volume = (p_volume - np.min(p_volume)) / (np.max(p_volume) - np.min(p_volume))
+    return (p_volume * 255).astype(np.uint8)
 
 
-def process_scan(path):
+def process_scan(p_path):
     """Read and resize volume"""
     # Read scan
-    volume = read_nifti_file(path)
+    vol = read_nifti_file(p_path)
     # Normalize
-    volume = normalize(volume)
+    vol = normalize(vol)
     # Rotate by -90 degrees
-    volume = ndimage.rotate(volume, -90, axes=(0, 1), reshape=False, order=1)
+    vol = ndimage.rotate(vol, -90, axes=(0, 1), reshape=False, order=1)
 
-    return volume
+    return vol
 
 
 # Extracting Half Volumes

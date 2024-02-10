@@ -1,15 +1,25 @@
-matplotlib~=3.7.1
-nibabel~=5.1.0
-numpy~=1.24.3
-opencv-python~=4.7.0.72
-pandas~=2.0.1
+matplotlib~=3.8.2
+nibabel~=5.2.0
+numpy~=1.24.0
+opencv-python~=4.9.0.80
+pandas~=2.2.0
 python-dotenv~=1.0.0
-scikit-learn~=1.2.2
-scipy~=1.9.1
-seaborn~=0.12.2
-setuptools~=65.5.1
-tensorflow~=2.13.0rc0
+scikit-learn~=1.4.0
+scipy~=1.12.0
+seaborn~=0.13.2
+setuptools~=69.0.0
+# tensorflow~=2.13.0rc0
 volumentations-3D
 wandb
--e tf_saliency_methods
+# -e tf_saliency_methods
+-e binvox
+-e torch_saliency_methods
 -e wsol_3d_metrics
+
+open3d~=0.18.0
+tqdm~=4.66.2
+pillow~=10.2.0
+torch~=2.2.0
+torchio~=0.19.5
+torchvision~=0.17.0
+ttach~=0.0.3

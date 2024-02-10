@@ -1,53 +1,34 @@
-from tensorflow.keras import Input, Model
-from tensorflow.keras.layers import (BatchNormalization, Conv3D, Dense,
-                                     GlobalAveragePooling3D,
-                                     MaxPool3D)
+import torch.nn as nn
 
 
-def get_model(height=128, width=128, depth=64, channels=4, n_classes=2):
-    """Build a 3D convolutional neural network model."""
-    inputs = Input((height, width, depth, channels))
+class CNN3DModel(nn.Module):
+    def __init__(self, in_channels, num_classes, hidden_dim):
+        super(CNN3DModel, self).__init__()
+        self.hidden_dim = hidden_dim
 
-    x = Conv3D(
-        filters=16, kernel_size=3, strides=(1, 1, 1), padding='same', activation='relu'
-    )(inputs)
-    x = Conv3D(
-        filters=16, kernel_size=3, strides=(1, 1, 1), padding='same', activation='relu'
-    )(x)
-    x = MaxPool3D(pool_size=(2, 2, 2), strides=(2, 2, 2), padding='same')(x)
-    x = BatchNormalization()(x)
+        self.conv1 = nn.Conv3d(in_channels, hidden_dim // 4, kernel_size=3, padding='same')
+        self.conv2 = nn.Conv3d(hidden_dim // 4, hidden_dim // 2, kernel_size=3, padding='same')
+        self.conv3 = nn.Conv3d(hidden_dim // 2, hidden_dim, kernel_size=3, padding='same')
 
-    x = Conv3D(
-        filters=32, kernel_size=3, strides=(1, 1, 1), padding='same', activation='relu'
-    )(x)
-    x = Conv3D(
-        filters=32, kernel_size=3, strides=(1, 1, 1), padding='same', activation='relu'
-    )(x)
-    x = MaxPool3D(pool_size=(2, 2, 2), strides=(2, 2, 2), padding='same')(x)
-    x = BatchNormalization()(x)
+        self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
 
-    x = Conv3D(
-        filters=64, kernel_size=3, strides=(1, 1, 1), padding='same', activation='relu'
-    )(x)
-    x = Conv3D(
-        filters=64, kernel_size=3, strides=(1, 1, 1), padding='same', activation='relu'
-    )(x)
-    x = MaxPool3D(pool_size=(2, 2, 2), strides=(2, 2, 2), padding='same')(x)
-    x = BatchNormalization()(x)
+        self.fc2 = nn.Linear(hidden_dim, num_classes)
 
-    x = Conv3D(
-        filters=128, kernel_size=3, strides=(1, 1, 1), padding='same', activation='relu'
-    )(x)
-    x = Conv3D(
-        filters=128, kernel_size=3, strides=(1, 1, 1), padding='same', activation='relu'
-    )(x)
-    x = MaxPool3D(pool_size=(2, 2, 2), strides=(2, 2, 2), padding='same')(x)
-    x = BatchNormalization()(x)
+        self.gap = nn.AdaptiveAvgPool3d((1, 1, 1))
 
-    x = GlobalAveragePooling3D()(x)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(0.5)
+        self.softmax = nn.Softmax(dim=-1)
 
-    x = Dense(units=64, activation='relu')(x)
-    x = Dense(units=32, activation='relu')(x)
-    outputs = Dense(units=n_classes, activation='softmax')(x)
+    def forward(self, x):
+        x = self.relu(self.conv1(x))
+        x = self.pool(x)
+        x = self.relu(self.conv2(x))
+        x = self.pool(x)
+        x = self.relu(self.conv3(x))
 
-    return Model(inputs, outputs, name='3D-CNN')
+        x = self.gap(x)
+        x = x.view(-1, self.hidden_dim)
+        x = self.fc2(x)
+
+        return x
