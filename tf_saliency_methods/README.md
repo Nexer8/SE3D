@@ -2,8 +2,7 @@
 
 Author: `REDACTED` *(available upon publication)*
 
-This repository contains implementations of saliency methods for TensorFlow 2.0. The methods are implemented as Keras
-callbacks, and can be used with any Keras model for input data of any dimensionality.
+This repository contains implementations of saliency methods for TensorFlow 2.0. The methods are implemented as Keras callbacks, and can be used with any Keras model for input data of any dimensionality.
 
 ## Table of Contents
 
@@ -32,8 +31,7 @@ pip install -e tf_saliency_methods
 
 ### Requirements
 
-The requirements for this repository are listed in `requirements.txt`. In case you want to install the package manually,
-you can do so by running:
+The requirements for this repository are listed in `requirements.txt`. In case you want to install the package manually, you can do so by running:
 
 ```sh
 pip install -r requirements.txt
@@ -93,4 +91,4 @@ To see more examples, please refer to the `examples/` directory.
 
 ## Code License
 
-To be determined.
+MIT License. See `LICENSE` for more information.

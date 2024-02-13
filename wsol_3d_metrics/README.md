@@ -16,23 +16,16 @@ Method Evaluation in 3D Medical Imaging"*.
 
 ## Available Metrics
 
-- `MaxBoxAcc`: Maximal Box Accuracy, introduced in the [paper](https://ieeexplore.ieee.org/document/9762560). It is a 2D
-  binary metric, which computes the *Intersection over Union (IoU)* between the bounding box over the largest connected
-  component of the prediction heatmap and the ground truth over various heatmap thresholds $\tau_1, \tau_2, \dots,
-  \tau_l$ and assigns `1` if for at least one threshold $\tau_i$ the *IoU* is greater than a threshold $\delta$ and `0`
-  otherwise.
-- `MaxBoxAccV2`: Maximal Box Accuracy V2, which is a variant of `MaxBoxAcc` introduced in the same paper. The difference
-  to `MaxBoxAcc` is that it allows for multiple contours in the ground truth and prediction. It is a 2D metric, which
-  computes the *IoU* between bounding boxes around all the connected components of the prediction heatmap and the ground
-  truth over various heatmap thresholds $\tau_1, \tau_2, \dots, \tau_l$ and assigns `1` if for at least one threshold
-  $\tau_i$ there is at least one pair of bounding boxes with *IoU* greater than a threshold $\delta$ and `0` otherwise.
-- `PxAP`: Pixel Average Precision, introduced in the same paper. It is computed as the area under the pixel-wise
-  precision-recall curve of the prediction heatmap with respect to the ground truth segmentation mask over various
-  heatmap thresholds $\tau_1, \tau_2, \dots, \tau_l$.
-- `Max3DBoxAcc`: Maximal 3D Box Accuracy, introduced in *"SE3D: A Framework for Saliency Method Evaluation in 3D Medical
-  Imaging"*. It is a 3D extension of `MaxBoxAcc`.
+- `MaxBoxAcc`: Maximal Box Accuracy, introduced in the [paper](https://ieeexplore.ieee.org/document/9762560). It is a 2D binary metric, which computes the *Intersection over Union (IoU)* between the bounding box over the largest connected component of the prediction heatmap and the ground truth over various heatmap thresholds $\tau_1, \tau_2, \dots, \tau_l$ and assigns `1` if for at least one threshold $\tau_i$ the *IoU* is greater than a threshold $\delta$ and `0` otherwise.
+- `MaxBoxAccV2`: Maximal Box Accuracy V2, which is a variant of `MaxBoxAcc` introduced in the same paper. The difference to `MaxBoxAcc` is that it allows for multiple contours in the ground truth and prediction. It is a 2D metric, which computes the *IoU* between bounding boxes around all the connected components of the prediction heatmap and the ground truth over various heatmap thresholds $\tau_1, \tau_2, \dots, \tau_l$ and assigns `1` if for at least one threshold $\tau_i$ there is at least one pair of bounding boxes with *IoU* greater than a threshold $\delta$ and `0` otherwise.
+- `PxAP`: Pixel Average Precision, introduced in the same paper. It is computed as the area under the pixel-wise precision-recall curve of the prediction heatmap with respect to the ground truth segmentation mask over various heatmap thresholds $\tau_1, \tau_2, \dots, \tau_l$.
+- `Max3DBoxAcc`: Maximal 3D Box Accuracy, introduced in *"SE3D: A Framework for Saliency Method Evaluation in 3D Medical Imaging"*. It is a 3D extension of `MaxBoxAcc`.
 - `Max3DBoxAccV2`: Maximal 3D Box Accuracy V2, introduced in *SE3D*. It is a 3D extension of `MaxBoxAccV2`.
 - `VxAP`: Voxel Average Precision, introduced in *SE3D*. It is a 3D extension of `PxAP`.
+- `MaxF1`: Maximal F1 Score, introduced in *SE3D*. It is a sample-wise average F1 score between the thresholded saliency maps $\{s_x \ge \tau\}$ and the ground truth segmentation masks $m_x$ computed at the optimal $\tau$.
+- `Prec@F1τ`: Precision at Optimal F1, introduced in *SE3D*. It computes the `VxPrec` over the maps $\{s_x \ge \tau_{F1}\}$ thresholded at the optimal $\tau_{F1}$, where $\tau_{F1}$ is the threshold that maximizes the F1 score.
+- `Rec@F1τ`: Recall at Optimal F1, introduced in *SE3D*. It computes the `VxRec` over the maps $\{s_x \ge \tau_{F1}\}$ thresholded at the optimal $\tau_{F1}$, where $\tau_{F1}$ is the threshold that maximizes the F1 score.
+- `MC`: Mass Concentration, introduced in *SE3D*, is specifically designed for the paired `shapenet-pairs` dataset and evaluates whether the saliency map focuses **only** on the object of interest.
 
 ## Usage
 
@@ -44,8 +37,7 @@ pip install -e wsol_3d_metrics
 
 ### Requirements
 
-The requirements for this repository are listed in `requirements.txt`. In case you want to install the package manually,
-you can do so by running:
+The requirements for this repository are listed in `requirements.txt`. In case you want to install the package manually, you can do so by running:
 
 ```sh
 pip install -r requirements.txt
@@ -113,4 +105,4 @@ To see more examples, please refer to the `examples/` directory.
 
 ## Code License
 
-To be determined.
+MIT License. See `LICENSE` for more information.

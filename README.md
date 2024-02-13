@@ -1,30 +1,15 @@
-# *SE3D*: A Framework for Saliency Method Evaluation in 3D Medical Imaging
-
-**WORK IN PROGRESS. Refined documentation will be available in the upcoming days.**
-
-Simple launch of the experiments:
-
-```sh
-python run_benchmarks.py -d <BraTS|shapenet-pairs|shapenet-binary|scannet-isolated|scannet-crop>
-```
+# *SE3D*: A Framework for Saliency Method Evaluation in 3D Imaging
 
 Authors: `REDACTED` *(available upon publication)*
 
-> Deep learning models are seeing widespread use in the medical field, with Convolutional Neural Networks (CNNs) being
-> used in scenarios such as histopathology and X-ray imaging. More recently, 3D CNNs have also been employed to analyze
-> volumetric data from various medical imaging modalities such as MRI and CT scans.
-> Despite advances in Explainable Artificial Intelligence, little effort has been put into constructing saliency maps
-> for 3D CNNs. Consequently, the use of such models in critical scenarios is hindered by their black-box,
-> non-interpretable nature. To address this issue, we propose SE3D: a framework for saliency method evaluation in 3D
-> medical imaging, based on a new benchmark built upon the BraTS 2020 brain tumor segmentation dataset. We also extend
-> popular 2D saliency methods to 3D data, achieving performances that match those of saliency methods designed for 3D
-> CNNs. Although 2D saliency methods have been widely used as means of model explanation, our results suggest that there
-> is margin for future improvements, to enable safer applications of 3D CNNs in the medical field.
+> For more than a decade, deep learning models have been dominating in various 2D imaging tasks. Their application is now extending to 3D imaging, with 3D Convolutional Neural Networks (3D CNNs) being able to process LIDAR, MRI, and CT scans, with significant implications for fields such as autonomous driving and medical imaging. In these critical settings, explaining the model's decisions is fundamental. Despite recent advances in Explainable Artificial Intelligence, however, little effort has been devoted to explaining 3D CNNs, and many works explain these models via inadequate extensions of 2D saliency methods.
+>
+> One fundamental limitation to the development of 3D saliency methods is the lack of a benchmark to quantitatively assess them on 3D data. To address this issue, we propose SE3D: a framework for **S**aliency method **E**valuation in **3D** imaging. We propose modifications to ShapeNet, ScanNet, and BraTS datasets, and evaluation metrics to assess saliency methods for 3D CNNs. We evaluate both state-of-the-art saliency methods designed for 3D data and extensions of popular 2D saliency methods to 3D. Our experiments show that 3D saliency methods do not provide explanations of sufficient quality, and that there is margin for future improvements and safer applications of 3D CNNs in critical fields.
 
 ## Table of Contents
 
-- [Dataset and Preprocessing](#dataset-and-preprocessing)
-    - [Downloading the Dataset](#downloading-the-dataset)
+- [Datasets and Preprocessing](#datasets-and-preprocessing)
+    - [Downloading the Datasets](#downloading-the-datasets)
     - [Preprocessing](#preprocessing)
 - [Saliency Methods](#saliency-methods)
 - [Evaluation Metrics](#evaluation-metrics)
@@ -35,21 +20,21 @@ Authors: `REDACTED` *(available upon publication)*
     - [Running the Experiments](#running-the-experiments)
 - [Code License](#code-license)
 
-## Dataset and Preprocessing
+## Datasets and Preprocessing
 
-The paper demonstrates the use of the proposed framework on the BraTS 2020 brain tumor segmentation dataset. This
-however does not mean that the framework is limited to this dataset, as it can be used with any dataset containing 3D
-volumes and corresponding segmentation masks.
+The paper demonstrates the use of the proposed framework on [BraTS 2020](https://www.med.upenn.edu/cbica/brats2020/), [ScanNet](http://www.scan-net.org), and [ShapeNet](https://shapenet.org) datasets. It also provides code for running the experiments on [KiTS19](https://kits19.grand-challenge.org) and [Medical Decathlon's Lung](http://medicaldecathlon.com) datasets. The authors, however, did not manage to obtain satisfactory results on the latter two datasets, and thus the corresponding models, as well as results, are not included in this repository. This however does not mean that the framework is limited to these datasets, as it can be used with any dataset containing 3D volumes and corresponding segmentation masks.
 
-### Downloading the Dataset
+### Downloading the Datasets
 
-The BraTS 2020 dataset can be downloaded from
-the [official website](https://www.med.upenn.edu/cbica/brats2020/data.html). The dataset is split into two parts:
-training and validation. The training set contains 369 volumes, while the validation set contains 125 volumes. The
-dataset is provided in the form of NIfTI files, which can be opened using the [NiBabel](https://nipy.org/nibabel/)
-library.
+- The BraTS 2020 dataset can be downloaded from the [official website](https://www.med.upenn.edu/cbica/brats2020/data.html). The dataset is provided in the form of NIfTI files, which can be opened using the [NiBabel](https://nipy.org/nibabel/) library.
+- The instructions how to ScanNet's data are available in the [official GitHub repository](https://github.com/ScanNet/ScanNet). The files are provided in the `.ply` format, and can be opened using the [Open3D](http://www.open3d.org) library.
+- ShapeNet's data can be downloaded from the [official website](https://shapenet.org). The dataset is provided in the form of 3D models in the `.binvox` format, which can be opened using the [binvox](https://www.patrickmin.com/binvox/) tool.
+- Medical Decathlon's Lung dataset can be downloaded from the [Google Drive](https://drive.google.com/drive/folders/1HqEgzS8BV2c7xYNrZdEAnrHk7osJJ--2) or from [AWS](http://medicaldecathlon.com/dataaws/). Similarly to Brats 2020, the dataset contains NIfTI files.
+- KiTS19 dataset can be downloaded from the [official GitHub repository](https://github.com/neheller/kits19). The dataset consists of NIfTI files.
 
 ### Preprocessing
+
+#### BraTS 2020
 
 The scans are provided in the form of 4D volumes, with the fourth dimension representing the different MRI modalities.
 The modalities are:
@@ -72,16 +57,10 @@ training folder of the BraTS 2020 dataset, and creates a folder containing the p
 
 The following preprocessing steps are performed:
 
-1. Each volume is rotated by $-90^{\circ}$ around $x$ and $y$ axes. This is done to align the volumes with the standard
-   radiological view, where the left side of the brain is on the right side of the image.
-2. Each volume is first min-max normalized to the range $[0, 1]$ and then converted to the range $[0, 255]$. This is
-   done to reduce the memory footprint of the dataset, as the original volumes are stored as 32-bit floating point
-   numbers.
-3. The segmentation masks are converted to contain only two labels: background (0) and tumor (1). This is done by
-   merging the labels 1, 2 and 4 into a single label. The intuition behind this is that the tumor is the only region of
-   interest for the saliency methods, and the different labels are not relevant for the evaluation.
-4. Both volumes and segmentation masks are split into 2 halves along the *corpus callosum* plane. Thanks to this, the
-   resulting dataset contains both volumes with and without the tumor.
+1. Each volume is rotated by $-90^{\circ}$ around $x$ and $y$ axes. This is done to align the volumes with the standard radiological view, where the left side of the brain is on the right side of the image.
+2. Each volume is first min-max normalized to the range $[0, 1]$ and then converted to the range $[0, 255]$. This is done to reduce the memory footprint of the dataset, as the original volumes are stored as 32-bit floating point numbers.
+3. The segmentation masks are converted to contain only two labels: background (0) and tumor (1). This is done by merging the labels 1, 2 and 4 into a single label. The intuition behind this is that the tumor is the only region of interest for the saliency methods, and the different labels are not relevant for the evaluation.
+4. Both volumes and segmentation masks are split into 2 halves along the *corpus callosum* plane. Thanks to this, the resulting dataset contains both volumes with and without the tumor.
 
 To run the preprocessing script, use the following command:
 
@@ -90,10 +69,25 @@ python prepare_dataset.py --train_data_root <path_to_train_data_root> \
                             --output_dir <path_to_output_dir>
 ```
 
+***Note**: The preprocessing script is designed to work with the BraTS 2020 dataset. It can be easily adapted to work with KiTS19, Medical Decathlon's Lung, and other datasets.*
+
+#### ScanNet
+
+The volumes are extracted in two ways:
+
+- `scannet-isolated`: each point cloud gets filtered and only the points belonging to a particular object instance get extracted.
+- `scannet-crop`: each point cloud gets cropped to a bounding box around a particular object instance, possibly containing points pertaining to other objects.
+
+#### ShapeNet
+
+The dataset is used to generate two new datasets:
+
+- `shapenet-binary`: the dataset contains only isolated objects corresponding to two classes: `chair` and `table`. The dataset is used to evaluate the saliency methods on a binary classification task.
+- `shapenet-pairs`: the dataset contains pairs of adjoined objects corresponding to two classes: `airplane` and `bench`. The dataset is used to evaluate *mass concentration* of the saliency methods.
+
 ## Saliency Methods
 
-All saliency methods are implemented as Keras callbacks, and can be used with any Keras model for input data of any
-dimensionality. The methods are implemented in the `tf_saliency_methods` module.
+All saliency methods are implemented as in both Torch and Keras callbacks, and can be used with any PyTorch and Keras model for input data of any dimensionality. The methods are implemented in `torch_saliency_methods` and `tf_saliency_methods` modules.
 
 Available methods:
 
@@ -126,19 +120,314 @@ The evaluation metrics are implemented in the `wsol_3d_metrics` module. The foll
   Imaging"*. It is a 3D extension of `MaxBoxAcc`.
 - `Max3DBoxAccV2`: Maximal 3D Box Accuracy V2, introduced in *SE3D*. It is a 3D extension of `MaxBoxAccV2`.
 - `VxAP`: Voxel Average Precision, introduced in *SE3D*. It is a 3D extension of `PxAP`.
+- `MaxF1`: Maximal F1 Score, introduced in *SE3D*. It is a sample-wise average F1 score between the thresholded saliency maps $\{s_x \ge \tau\}$ and the ground truth segmentation masks $m_x$ computed at the optimal $\tau$.
+- `Prec@F1τ`: Precision at Optimal F1, introduced in *SE3D*. It computes the `VxPrec` over the maps $\{s_x \ge \tau_{F1}\}$ thresholded at the optimal $\tau_{F1}$, where $\tau_{F1}$ is the threshold that maximizes the F1 score.
+- `Rec@F1τ`: Recall at Optimal F1, introduced in *SE3D*. It computes the `VxRec` over the maps $\{s_x \ge \tau_{F1}\}$ thresholded at the optimal $\tau_{F1}$, where $\tau_{F1}$ is the threshold that maximizes the F1 score.
+- `MC`: Mass Concentration, introduced in *SE3D*, is specifically designed for the paired `shapenet-pairs` dataset and evaluates whether the saliency map focuses **only** on the object of interest.
 
 Check the module's `README.md` for more details.
 
 ## Results
 
-Model's accuracy evaluated on all 5 folds: $76.16\% \pm 0.57\%$ (*mean $\pm$ standard error*).
+<table style="text-align:center;">
+  <caption>Results of saliency map evaluation for 2D and 3D metrics. Since in our case <code>VxAP</code>=<code>PxAP</code>, we only report the former.</caption>
+  <thead>
+    <tr>
+      <th rowspan="2" style="text-align:center;">Dataset <br>&lt;classes&gt; <br>(test accuracy)</th>
+      <th rowspan="2" style="text-align:center;">Saliency Method</th>
+      <th colspan="2" style="text-align:center;">3D WSOL Metrics</th>
+      <th colspan="4" style="text-align:center;">3D WSSS Metrics</th>
+      <th colspan="2" style="text-align:center;">2D WSOL Metrics</th>
+    </tr>
+    <tr>
+      <th style="text-align:center;">Max3DBoxAcc <br> (&delta; = 0.5)</th>
+      <th style="text-align:center;">Max3DBoxAccV2 <br> (&delta; &in; {0.3, 0.5, 0.7})</th>
+      <th style="text-align:center;">VxAP</th>
+      <th style="text-align:center;">MaxF1</th>
+      <th style="text-align:center;">Prec@F1&tau;</th>
+      <th style="text-align:center;">Rec@F1&tau;</th>
+      <th style="text-align:center;">MaxBoxAcc <br> (&delta; = 0.5)</th>
+      <th style="text-align:center;">MaxBoxAccV2 <br> (&delta; &in; {0.3, 0.5, 0.7})</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="5" style="text-align:center; width:1%; white-space:nowrap;">
+        <div style="transform:rotate(-90deg); display:inline-block;">shapenet-binary <br> chair/table <br> (0.989)</div>
+      </td>
+      <td>Grad-CAM</td>
+      <td>0.38</td>
+      <td>0.42</td>
+      <td>0.11</td>
+      <td>0.18</td>
+      <td>0.11</td>
+      <td>0.59</td>
+      <td>0.14</td>
+      <td>0.18</td>
+    </tr>
+    <tr>
+      <td>Grad-CAM++</td>
+      <td>0.18</td>
+      <td>0.35</td>
+      <td>0.10</td>
+      <td>0.18</td>
+      <td>0.09</td>
+      <td>1.00</td>
+      <td>0.10</td>
+      <td>0.14</td>
+    </tr>
+    <tr>
+      <td>HiResCAM</td>
+      <td>0.24</td>
+      <td>0.34</td>
+      <td>0.10</td>
+      <td>0.19</td>
+      <td>0.11</td>
+      <td>0.60</td>
+      <td>0.10</td>
+      <td>0.14</td>
+    </tr>
+    <tr>
+      <td>Respond-CAM</td>
+      <td>0.11</td>
+      <td>0.22</td>
+      <td>0.10</td>
+      <td>0.18</td>
+      <td>0.10</td>
+      <td>1.00</td>
+      <td>0.05</td>
+      <td>0.09</td>
+    </tr>
+    <tr>
+      <td>Saliency Tubes</td>
+      <td>0.29</td>
+      <td>0.40</td>
+      <td>0.23</td>
+      <td>0.30</td>
+      <td>0.25</td>
+      <td>0.38</td>
+      <td>0.19</td>
+      <td>0.29</td>
+    </tr>
+    <tr style="border-bottom: 3px;">
+      <td colspan="10"></td>
+    </tr>
+    <tr>
+      <td rowspan="5" style="text-align:center; width:1%; white-space:nowrap;">
+        <div style="transform:rotate(-90deg); display:inline-block;">scannet-isolated <br> chair/table <br> (0.919)</div>
+      </td>
+      <td>Grad-CAM</td>
+      <td>0.39</td>
+      <td>0.41</td>
+      <td>0.05</td>
+      <td>0.11</td>
+      <td>0.07</td>
+      <td>0.28</td>
+      <td>0.02</td>
+      <td>0.07</td>
+    </tr>
+    <tr>
+      <td>Grad-CAM++</td>
+      <td>0.00</td>
+      <td>0.01</td>
+      <td>0.04</td>
+      <td>0.10</td>
+      <td>0.06</td>
+      <td>0.24</td>
+      <td>0.01</td>
+      <td>0.05</td>
+    </tr>
+    <tr>
+      <td>HiResCAM</td>
+      <td>0.00</td>
+      <td>0.10</td>
+      <td>0.05</td>
+      <td>0.12</td>
+      <td>0.08</td>
+      <td>0.26</td>
+      <td>0.01</td>
+      <td>0.07</td>
+    </tr>
+    <tr>
+      <td>Respond-CAM</td>
+      <td>0.01</td>
+      <td>0.18</td>
+      <td>0.05</td>
+      <td>0.11</td>
+      <td>0.08</td>
+      <td>0.20</td>
+      <td>0.02</td>
+      <td>0.08</td>
+    </tr>
+    <tr>
+      <td>Saliency Tubes</td>
+      <td>0.63</td>
+      <td>0.61</td>
+      <td>0.09</td>
+      <td>0.18</td>
+      <td>0.12</td>
+      <td>0.35</td>
+      <td>0.06</td>
+      <td>0.10</td>
+    </tr>
+    <tr style="border-bottom: 3px;">
+      <td colspan="10"></td>
+    </tr>
+    <tr>
+      <td rowspan="5" style="text-align:center; width:1%; white-space:nowrap;">
+        <div style="transform:rotate(-90deg); display:inline-block;">scannet-crop <br> chair/table <br> (0.917)</div>
+      </td>
+      <td>Grad-CAM</td>
+      <td>0.19</td>
+      <td>0.31</td>
+      <td>0.04</td>
+      <td>0.07</td>
+      <td>0.04</td>
+      <td>0.37</td>
+      <td>0.01</td>
+      <td>0.10</td>
+    </tr>
+    <tr>
+      <td>Grad-CAM++</td>
+      <td>0.00</td>
+      <td>0.03</td>
+      <td>0.03</td>
+      <td>0.07</td>
+      <td>0.04</td>
+      <td>0.38</td>
+      <td>0.01</td>
+      <td>0.04</td>
+    </tr>
+    <tr>
+      <td>HiResCAM</td>
+      <td>0.01</td>
+      <td>0.05</td>
+      <td>0.04</td>
+      <td>0.08</td>
+      <td>0.04</td>
+      <td>0.28</td>
+      <td>0.01</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>Respond-CAM</td>
+      <td>0.21</td>
+      <td>0.27</td>
+      <td>0.03</td>
+      <td>0.07</td>
+      <td>0.04</td>
+      <td>0.35</td>
+      <td>0.01</td>
+      <td>0.08</td>
+    </tr>
+    <tr>
+      <td>Saliency Tubes</td>
+      <td>0.52</td>
+      <td>0.50</td>
+      <td>0.06</td>
+      <td>0.12</td>
+      <td>0.07</td>
+      <td>0.29</td>
+      <td>0.03</td>
+      <td>0.27</td>
+    </tr>
+    <tr style="border-bottom: 3px;">
+      <td colspan="10"></td>
+    </tr>
+    <tr>
+      <td rowspan="5" style="text-align:center; width:1%; white-space:nowrap;">
+        <div style="transform:rotate(-90deg); display:inline-block;">brats-halves <br> tumor/no tumor <br> (0.796)</div>
+      </td>
+      <td>Grad-CAM</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.06</td>
+      <td>0.13</td>
+      <td>0.11</td>
+      <td>0.18</td>
+      <td>0.00</td>
+      <td>0.03</td>
+    </tr>
+    <tr>
+      <td>Grad-CAM++</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.09</td>
+      <td>0.19</td>
+      <td>0.15</td>
+      <td>0.27</td>
+      <td>0.03</td>
+      <td>0.03</td>
+    </tr>
+    <tr>
+      <td>HiResCAM</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.09</td>
+      <td>0.18</td>
+      <td>0.19</td>
+      <td>0.27</td>
+      <td>0.01</td>
+      <td>0.02</td>
+    </tr>
+    <tr>
+      <td>Respond-CAM</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.03</td>
+      <td>0.10</td>
+      <td>0.07</td>
+      <td>0.16</td>
+      <td>0.01</td>
+      <td>0.01</td>
+    </tr>
+    <tr>
+      <td>Saliency Tubes</td>
+      <td>0.19</td>
+      <td>0.21</td>
+      <td>0.12</td>
+      <td>0.21</td>
+      <td>0.14</td>
+      <td>0.40</td>
+      <td>0.12</td>
+      <td>0.13</td>
+    </tr>
+  </tbody>
+</table>
 
-| Method         | MaxBoxAcc (IoU: 0.5) | MaxBoxAcc V2 (IoU: [0.3, 0.5, 0.7])                           | VxAP               | Max3DBoxAcc (IoU: 0.5) | Max3DBoxAcc V2 (IoU: [0.3, 0.5, 0.7])                          |
-|----------------|----------------------|---------------------------------------------------------------|--------------------|------------------------|----------------------------------------------------------------|
-| Grad-CAM       | 5.26 &plusmn; 0.62   | [14.81 &plusmn; 0.92, 5.75 &plusmn; 0.55, 1.14 &plusmn; 0.12] | 6.92 &plusmn; 1.04 | 16.17 &plusmn; 2.82    | [47.48 &plusmn; 4.09, 16.87 &plusmn; 2.77, 3.30 &plusmn; 1.08] | 
-| HiResCAM       | 2.25 &plusmn; 0.21   | [8.65 &plusmn; 0.47, 2.69 &plusmn; 0.18, 0.45 &plusmn; 0.04]  | 4.45 &plusmn; 0.55 | 10.09 &plusmn; 1.70    | [39.30 &plusmn; 2.97, 10.61 &plusmn; 1.75, 1.22 &plusmn; 0.19] | 
-| Grad-CAM++     | 6.32 &plusmn; 0.91   | [16.05 &plusmn; 1.18, 6.87 &plusmn; 0.78, 1.37 &plusmn; 0.15] | 9.70 &plusmn; 2.13 | 18.09 &plusmn; 2.78    | [49.22 &plusmn; 4.88, 18.61 &plusmn; 2.98, 3.83 &plusmn; 1.36] | 
-| Saliency Tubes | 5.63 &plusmn; 1.54   | [13.60 &plusmn; 1.84, 6.84 &plusmn; 1.67, 1.96 &plusmn; 0.60] | 8.68 &plusmn; 2.98 | 14.78 &plusmn; 4.14    | [41.22 &plusmn; 4.16, 17.04 &plusmn; 4.02, 2.26 &plusmn; 0.72] | 
+<table style="text-align:center;">
+  <caption>Results for the <code>Mass Concentration</code> Sanity Check.</caption>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Saliency Method</th>
+      <th>Mass Concentration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="6" style="text-align:center;">shapenet-pairs <br> Classes: airplane/bench <br> Test accuracy: 0.967</td>
+      <td>Grad-CAM</td>
+      <td>0.752</td>
+    </tr>
+    <tr>
+      <td>Grad-CAM++</td>
+      <td>0.727</td>
+    </tr>
+    <tr>
+      <td>HiResCAM</td>
+      <td>0.713</td>
+    </tr>
+    <tr>
+      <td>Respond-CAM</td>
+      <td>0.793</td>
+    </tr>
+    <tr>
+      <td>SaliencyTubes</td>
+      <td>0.744</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Reproducing the Results
 
@@ -159,19 +448,23 @@ pip install -r requirements.txt
 The code is structured as follows:
 
 ```sh
-SE3D                    # root directory
-├── 3D_CNN              # 3D CNN model weights and training logs for all 5 folds
-├── README.md           # this file
-├── evaluate.py         # script for evaluating the saliency methods
-├── metadata.csv        # metadata file for the customized BraTS 2020 dataset
-├── model.py            # 3D CNN model architecture definition
-├── prepare_dataset.py  # script for creating the customized BraTS 2020 dataset
-├── requirements.txt    # requirements file
-├── results_to_md.py    # script for converting the results to Markdown format
-├── run_all.sh          # script for running all experiments
-├── tf_saliency_methods # module implementing the saliency methods
-├── train.py            # script for training the 3D CNN model
-└── wsol_3d_metrics     # module implementing the evaluation metrics
+SE3D                        # root directory
+├── binvox                  # module containing the binvox tool
+├── data_preprocessors      # directory containing data preprocessing classes
+├── models                  # directory containing the 3D CNN model weights
+├── scripts                 # directory containing the scripts for running the experiments
+├── tf_saliency_methods     # module implementing the saliency methods for Keras
+├── torch_saliency_methods  # module implementing the saliency methods for PyTorch
+├── utils                   # directory containing utility functions
+├── wsol_3d_metrics         # module implementing the evaluation metrics
+├── dataset.py              # PyTorch dataset class for the customized datasets
+├── LICENSE                 # license file
+├── metadata.csv            # metadata file for the customized BraTS 2020 dataset
+├── model.py                # 3D CNN model architecture definition
+├── README.md               # this file
+├── requirements.txt        # requirements file
+├── run_all.sh              # script for running all experiments
+└── run_benchmarks.py       # script for running the benchmarks
 ```
 
 ### Running the Experiments
@@ -181,9 +474,8 @@ To reproduce the experiments, execute the following shell script:
 ```sh
 ./run_all.sh --metadata_root <path_to_metadata_root> \
                 --train_data_root <path_to_BraTS2020_TrainingData> \
-                --data_root <output_path_for_customized_BraTS2020_dataset> \
-                --model_path <output_path_for_model_weights> \
-                --wandb <flag_for_logging_to_wandb>
+                --datasets_root <folder_containing_customized_datasets> \
+                --model_root <output_path_for_model_weights> \
 ```
 
 The script will perform the following steps:
@@ -193,14 +485,27 @@ The script will perform the following steps:
 3. Evaluate the saliency methods on the trained model on all 5 folds.
 4. Convert the results to *Markdown* format.
 
-To manually reproduce the experiments, see the `run_all.sh` script for the commands to run. In case of running the
-experiments with `--wandb` flag set, make sure to set the `WANDB_API_KEY`, `WANDB_BRATS_PROJECT`, and `WANDB_ENTITY`
-environment variables to the appropriate values.
+To manually reproduce the experiments, see the `run_all.sh` script for the commands to run.
+
+You can also run the benchmarks separately using the `run_benchmarks.py` script:
+
+```sh
+python run_benchmarks.py -d <dataset> \
+                          -o <results_output_dir> \
+                          --datasets_base_path <path_to_datasets> \
+                          --models_base_path <path_to_models> \
+                          --n_folds <number_of_folds> \
+                          --fold <fold_number> \
+                          --train \ # boolean flag
+                          --model_dataset <dataset_the_model_was_trained_on>
+```
+
+This will run the benchmarks for the saliency methods on the trained model for a chosen dataset and number of folds.
 
 ## Acknowledgements
 
-This code is based on the [wsolevaluation](https://github.com/clovaai/wsolevaluation) work.
+This code is based on [wsolevaluation](https://github.com/clovaai/wsolevaluation), [binvox](https://github.com/faridyagubbayli/binvox), and [pytorch-grad-cam](https://github.com/jacobgil/pytorch-grad-cam/) works.
 
 ## Code License
 
-To be determined.
+MIT License. See the `LICENSE` file for details.

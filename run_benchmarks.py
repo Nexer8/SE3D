@@ -5,8 +5,8 @@ from pathlib import Path
 from torch.utils.data import DataLoader
 
 from data_preprocessors.brats_preprocessor import BraTSPreprocessor
-from data_preprocessors.scannet_preprocessor import ScannetCropPreprocessor, ScannetIsolatedPreprocessor
-from data_preprocessors.shapenet_preprocessor import ShapenetPairsPreprocessor, ShapenetBinaryPreprocessor
+from data_preprocessors.scannet_preprocessor import ScanNetCropPreprocessor, ScanNetIsolatedPreprocessor
+from data_preprocessors.shapenet_preprocessor import ShapeNetPairsPreprocessor, ShapeNetBinaryPreprocessor
 from dataset import CustomDataset
 from model import CNN3DModel
 from scripts.evaluate import compute_metrics
@@ -47,13 +47,13 @@ def run_benchmark(config):
         preprocessor = BraTSPreprocessor(config['datasets_base_path'])
         ages = [20]
     elif config['dataset'] == "shapenet-pairs":
-        preprocessor = ShapenetPairsPreprocessor(config['datasets_base_path'])
+        preprocessor = ShapeNetPairsPreprocessor(config['datasets_base_path'])
     elif config['dataset'] == "shapenet-binary":
-        preprocessor = ShapenetBinaryPreprocessor(config['datasets_base_path'])
+        preprocessor = ShapeNetBinaryPreprocessor(config['datasets_base_path'])
     elif config['dataset'] == "scannet-isolated":
-        preprocessor = ScannetIsolatedPreprocessor(config['datasets_base_path'])
+        preprocessor = ScanNetIsolatedPreprocessor(config['datasets_base_path'])
     elif config['dataset'] == "scannet-crop":
-        preprocessor = ScannetCropPreprocessor(config['datasets_base_path'])
+        preprocessor = ScanNetCropPreprocessor(config['datasets_base_path'])
     else:
         # ages = [20, 10]
         raise NotImplementedError(
@@ -108,6 +108,7 @@ def main():
         default=0)
     parser.add_argument(
         '--train',
+        action="store_true",
         help="Whether to retrain the models. Defaults to False.",
         default=False)
     # argument to choose a model based on the dataset it was trained on

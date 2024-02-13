@@ -26,7 +26,7 @@ def load_class_dict(file_path):
     return {line.split(" ")[0]: line.split(" ")[1] for line in lines}
 
 
-class ShapenetBasePreprocessor(DataPreprocessor):
+class ShapeNetBasePreprocessor(DataPreprocessor):
     def __init__(self, base_path: str, mean=np.array([0.06027088]), std=np.array([0.23798802]),
                  train_class_ids: tuple = None):
         super().__init__(base_path=base_path, mean=mean, std=std)
@@ -34,7 +34,7 @@ class ShapenetBasePreprocessor(DataPreprocessor):
         self.train_class_ids = train_class_ids
 
 
-class ShapenetBinaryPreprocessor(ShapenetBasePreprocessor):
+class ShapeNetBinaryPreprocessor(ShapeNetBasePreprocessor):
     # chair / table
     def __init__(self, base_path: str, train_class_ids: tuple = ("03001627", "04379243")):
         super().__init__(base_path=base_path, train_class_ids=train_class_ids)
@@ -65,7 +65,7 @@ class ShapenetBinaryPreprocessor(ShapenetBasePreprocessor):
         pass
 
 
-class ShapenetPairsPreprocessor(ShapenetBasePreprocessor):
+class ShapeNetPairsPreprocessor(ShapeNetBasePreprocessor):
     # airplane / bench
     def __init__(self, base_path: str, train_class_ids: tuple = ("02691156", "02828884")):
         super().__init__(base_path=base_path, train_class_ids=train_class_ids)

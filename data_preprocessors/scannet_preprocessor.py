@@ -9,7 +9,7 @@ from data_preprocessors.data_preprocessor import DataPreprocessor
 from utils.pcd_utils import load_ply_scene, filter_by_object, voxelize_point_cloud, crop_point_cloud
 
 
-class ScannetBasePreprocessor(DataPreprocessor):
+class ScanNetBasePreprocessor(DataPreprocessor):
     def __init__(self, base_path: str, mean=np.array([0.02899467]), std=np.array([0.16779148]),
                  train_class_names: tuple = ("chair", "table")):
         super().__init__(base_path=base_path, mean=mean, std=std)
@@ -17,7 +17,7 @@ class ScannetBasePreprocessor(DataPreprocessor):
         self.train_class_names = train_class_names
 
 
-class ScannetIsolatedPreprocessor(ScannetBasePreprocessor):
+class ScanNetIsolatedPreprocessor(ScanNetBasePreprocessor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -72,7 +72,7 @@ class ScannetIsolatedPreprocessor(ScannetBasePreprocessor):
         pass
 
 
-class ScannetCropPreprocessor(ScannetBasePreprocessor):
+class ScanNetCropPreprocessor(ScanNetBasePreprocessor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
