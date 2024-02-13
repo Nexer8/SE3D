@@ -1,6 +1,12 @@
 # *SE3D*: A Framework for Saliency Method Evaluation in 3D Medical Imaging
 
-**WORK IN PROGRESS. Cleaned up code will be available soon.**
+**WORK IN PROGRESS. Refined documentation will be available in the upcoming days.**
+
+Simple launch of the experiments:
+
+```sh
+python run_benchmarks.py -d <BraTS|shapenet-pairs|shapenet-binary|scannet-isolated|scannet-crop>
+```
 
 Authors: `REDACTED` *(available upon publication)*
 

@@ -2,17 +2,7 @@ import torch
 import torchio as tio
 from torch.utils.data import Dataset
 
-
-# Utilities for dataset folding
-def fold_data_list(data_list, n_folds, test_fold, split="train"):
-    fold_size = len(data_list) // n_folds
-    if split == "train":
-        return (
-                data_list[: test_fold * fold_size]
-                + data_list[(test_fold + 1) * fold_size:]
-        )
-    else:
-        return data_list[test_fold * fold_size:(test_fold + 1) * fold_size]
+from utils.data_utils import fold_data_list
 
 
 class CustomDataset(Dataset):

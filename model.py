@@ -2,7 +2,8 @@ import torch.nn as nn
 
 
 class CNN3DModel(nn.Module):
-    def __init__(self, in_channels, num_classes, hidden_dim):
+    def __init__(self, in_channels, n_classes, hidden_dim):
+        print("Creating model (1/1)")
         super(CNN3DModel, self).__init__()
         self.hidden_dim = hidden_dim
 
@@ -12,7 +13,7 @@ class CNN3DModel(nn.Module):
 
         self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
 
-        self.fc2 = nn.Linear(hidden_dim, num_classes)
+        self.fc2 = nn.Linear(hidden_dim, n_classes)
 
         self.gap = nn.AdaptiveAvgPool3d((1, 1, 1))
 
