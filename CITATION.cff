@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: If you use this software, please cite both the article from preferred-citation and the software itself.
+authors:
+  - family-names: Wiśniewski
+    given-names: Mariusz
+    orcid: "https://orcid.org/0009-0009-6282-8384"
+  - family-names: Giulivi
+    given-names: Loris
+    orcid: "https://orcid.org/0000-0001-7027-4726"
+  - family-names: Boracchi
+    given-names: Giacomo
+    orcid: "https://orcid.org/0000-0002-1650-3054"
+title: 'SE3D: A Framework for Saliency Method Evaluation in 3D Imaging'
+version: 1.0.0
+doi: 10.1109/ICIP51287.2024.10647305
+date-released: '2024-10-27'
+preferred-citation:
+  authors:
+    - family-names: Wiśniewski
+      given-names: Mariusz
+      orcid: "https://orcid.org/0009-0009-6282-8384"
+    - family-names: Giulivi
+      given-names: Loris
+      orcid: "https://orcid.org/0000-0001-7027-4726"
+    - family-names: Boracchi
+      given-names: Giacomo
+      orcid: "https://orcid.org/0000-0002-1650-3054"
+  title: 'SE3D: A Framework for Saliency Method Evaluation in 3D Imaging'
+  doi: 10.1109/ICIP51287.2024.10647305
+  type: conference-paper
+  pages: 89-95
+  year: '2024'
+  collection-title: 2024 IEEE International Conference on Image Processing (ICIP)
+  conference: {}
+  publisher: {}

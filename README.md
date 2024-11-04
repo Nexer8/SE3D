@@ -1,23 +1,27 @@
 # *SE3D*: A Framework for Saliency Method Evaluation in 3D Imaging
 
-Authors: `REDACTED` *(available upon publication)*
+Authors: [*Mariusz Wiśniewski*](https://linkedin.com/in/mariusz-krzysztof-wisniewski/), [*Loris Giulivi*](https://linkedin.com/in/lorisgiulivi/), [*Giacomo Boracchi*](https://linkedin.com/in/giacomoboracchi/).
 
 > For more than a decade, deep learning models have been dominating in various 2D imaging tasks. Their application is now extending to 3D imaging, with 3D Convolutional Neural Networks (3D CNNs) being able to process LIDAR, MRI, and CT scans, with significant implications for fields such as autonomous driving and medical imaging. In these critical settings, explaining the model's decisions is fundamental. Despite recent advances in Explainable Artificial Intelligence, however, little effort has been devoted to explaining 3D CNNs, and many works explain these models via inadequate extensions of 2D saliency methods.
 >
 > One fundamental limitation to the development of 3D saliency methods is the lack of a benchmark to quantitatively assess them on 3D data. To address this issue, we propose SE3D: a framework for **S**aliency method **E**valuation in **3D** imaging. We propose modifications to ShapeNet, ScanNet, and BraTS datasets, and evaluation metrics to assess saliency methods for 3D CNNs. We evaluate both state-of-the-art saliency methods designed for 3D data and extensions of popular 2D saliency methods to 3D. Our experiments show that 3D saliency methods do not provide explanations of sufficient quality, and that there is margin for future improvements and safer applications of 3D CNNs in critical fields.
 
+For more details, please refer to our publication: [SE3D: A Framework for Saliency Method Evaluation in 3D Imaging](https://doi.org/10.1109/ICIP51287.2024.10647305).
+
 ## Table of Contents
 
 - [Datasets and Preprocessing](#datasets-and-preprocessing)
-    - [Downloading the Datasets](#downloading-the-datasets)
-    - [Preprocessing](#preprocessing)
+  - [Downloading the Datasets](#downloading-the-datasets)
+  - [Preprocessing](#preprocessing)
 - [Saliency Methods](#saliency-methods)
 - [Evaluation Metrics](#evaluation-metrics)
 - [Results](#results)
 - [Reproducing the Results](#reproducing-the-results)
-    - [Requirements](#requirements)
-    - [Code Structure](#code-structure)
-    - [Running the Experiments](#running-the-experiments)
+  - [Requirements](#requirements)
+  - [Code Structure](#code-structure)
+  - [Running the Experiments](#running-the-experiments)
+- [Citation](#citation)
+- [Acknowledgements](#acknowledgements)
 - [Code License](#code-license)
 
 ## Datasets and Preprocessing
@@ -501,6 +505,23 @@ python run_benchmarks.py -d <dataset> \
 ```
 
 This will run the benchmarks for the saliency methods on the trained model for a chosen dataset and number of folds.
+
+## Citation
+
+If you find this work useful, please consider citing the following paper:
+
+```bibtex
+@INPROCEEDINGS{10647305,
+  author={Wiśniewski, Mariusz and Giulivi, Loris and Boracchi, Giacomo},
+  booktitle={2024 IEEE International Conference on Image Processing (ICIP)}, 
+  title={SE3D: A Framework for Saliency Method Evaluation in 3D Imaging}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={89-95},
+  keywords={Measurement;Deep learning;Solid modeling;Three-dimensional displays;Laser radar;Magnetic resonance imaging;Image processing;Deep Learning;Saliency Maps;3D Convolutions;Computer Vision},
+  doi={10.1109/ICIP51287.2024.10647305}}
+```
 
 ## Acknowledgements
 
